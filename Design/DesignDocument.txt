@@ -1,0 +1,25 @@
+Untitled 2D Game
+
+Mechanics:
+	-Run and Gun
+	-Stealth
+	-Gravity Control
+		o Player can walk on ceilings using double jump
+		o Player can freeze in the air for a certain amount of time
+		o Player can freeze enemies for a certain amount of time
+	-Platformer
+	-puzzle
+
+Gameplay:
+	- Story
+		o The player must climb to the top of a tower that contains the secret documents held by an evil
+		  technological corporation. The player is a spy using government gravity technology and the docs
+		  in question are the specifications to a virus and cure to said virus that the corporation 
+		  wants to release in order to cull the population.
+	- Level based game. No set level number yet. 
+	- Enemies will be floating robots that are scanning each floor for intruders. 
+	  Max of 3 different types of robots
+
+
+Art: Pixel? Not sure yet
+	
