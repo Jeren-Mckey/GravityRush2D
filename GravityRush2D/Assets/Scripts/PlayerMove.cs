@@ -6,16 +6,22 @@ public class PlayerMove : MonoBehaviour
 {
 
     public float playerMovement;
-    public float playerJumpSpeed;
     private bool gravFlipped;
     private float distToGround;
+    private int playerJumps;
+    private int gravSwitches;
+    public GameObject playerObject;
+    public GameObject spawnPoint;
 
 
     // Start is called before the first frame update
     void Start()
     {
         gravFlipped = false;
+        playerJumps = 1;
+        gravSwitches = 1;
         distToGround = gameObject.GetComponent<Collider2D>().bounds.extents.y;
+        LevelManager.playerHitDelegate += spawnPlayer;
     }
 
     // Update is called once per frame
@@ -27,10 +33,11 @@ public class PlayerMove : MonoBehaviour
     void FixedUpdate()
     {
         //Gravity Switch
-        if (Input.GetKeyDown(KeyCode.V))
+        if (Input.GetKeyDown(KeyCode.V) && gravSwitches > 0)
         {
             gameObject.GetComponent<Rigidbody2D>().gravityScale = -gameObject.GetComponent<Rigidbody2D>().gravityScale;
             gravFlipped = !gravFlipped;
+            gravSwitches--;
         }
 
         //Player Movement
@@ -44,27 +51,39 @@ public class PlayerMove : MonoBehaviour
         }
 
         //Player Jumps
-        if (Input.GetKeyDown(KeyCode.UpArrow) && !gravFlipped && isGrounded())
+        if (Input.GetKeyDown(KeyCode.UpArrow) && !gravFlipped && playerJumps > 0)
         {
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-            gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 5), ForceMode2D.Impulse);
+            gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 4), ForceMode2D.Impulse);
+            playerJumps--;
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow) && gravFlipped && isGrounded())
+        else if (Input.GetKeyDown(KeyCode.UpArrow) && gravFlipped && playerJumps > 0)
         {
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-            gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, -5), ForceMode2D.Impulse);
+            gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, -4), ForceMode2D.Impulse);
+            playerJumps--;
         }
     }
 
-    private bool isGrounded()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        RaycastHit2D hit =  Physics2D.Raycast(transform.position, -Vector2.up, distToGround + .1f);
-        if (hit.collider != null)
+        if (collision.collider.tag == "Floor")
         {
-            return true;
+            playerJumps = 1;
+            gravSwitches = 1;
         }
-        else return false;
+        else if (collision.collider.tag == "Enemy")
+        {
+            LevelManager.OnPlayerHit();
+            LevelManager.playerHitDelegate -= spawnPlayer;
+            Destroy(gameObject);
+        }
     }
 
-    
+    void spawnPlayer()
+    {
+        GameObject go = Instantiate(playerObject, spawnPoint.transform.position, Quaternion.identity);
+        go.name = gameObject.name;
+        
+    }
 }
