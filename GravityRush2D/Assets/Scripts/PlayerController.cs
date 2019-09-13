@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        spawnPoint = GameObject.FindGameObjectWithTag("Spawn");
         gravFlipped = false;
         playerJumps = 1;
         gravSwitches = 1;
@@ -86,11 +87,11 @@ public class PlayerController : MonoBehaviour
         {
             //Reset Gravity
             gameObject.GetComponent<Rigidbody2D>().gravityScale = 1;
-            
+
             //Trigger event
             GameManager.OnPlayerHit();
             GameManager.playerHitDelegate -= spawnPlayer;
-            Destroy(gameObject);
+            Destroy(this.gameObject);
         }
         else if (collision.collider.tag == "Obstacle")
         {
@@ -107,15 +108,18 @@ public class PlayerController : MonoBehaviour
         else if (collision.collider.tag == "Exit")
         {
             GameManager.CurrentLevel++;
-            SceneManager.LoadScene("Level" + GameManager.CurrentLevel.ToString());
+            GameManager.loadLevel();
         }
     }
 
     void spawnPlayer()
     {
-        GameObject go = Instantiate(playerObject, spawnPoint.transform.position, Quaternion.identity);
-        go.name = gameObject.name;
-        
+        spawnPoint = GameObject.FindGameObjectWithTag("Spawn");
+        if (playerObject != null)
+        {
+            GameObject go = Instantiate(playerObject, spawnPoint.transform.position, Quaternion.identity);
+            go.name = gameObject.name;
+        }     
     }
 
     bool isGrounded()

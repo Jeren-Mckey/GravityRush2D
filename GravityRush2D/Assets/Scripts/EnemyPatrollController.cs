@@ -24,7 +24,6 @@ public class EnemyPatrollController : MonoBehaviour
     void FixedUpdate()
     {
         distance = VectorMath.SqrDistanceXZ(target.position, transform.position);
-        Debug.Log(distance);
         if (distance >= 0 && distance < .01)
         {
             Vector3 temp = target.position;
